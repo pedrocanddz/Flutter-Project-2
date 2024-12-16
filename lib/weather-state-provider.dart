@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:intl/intl.dart';
 
 class WeatherForecast {
   final DateTime time;
@@ -20,14 +19,8 @@ class WeatherForecast {
     required this.uvIndex,
   });
 
-  factory WeatherForecast.fromJson(
-    DateTime time, 
-    double temp, 
-    double humidity, 
-    double precipitation, 
-    double rain, 
-    double uvIndex
-  ) {
+  factory WeatherForecast.fromJson(DateTime time, double temp, double humidity,
+      double precipitation, double rain, double uvIndex) {
     return WeatherForecast(
       time: time,
       temperature2m: temp,
@@ -61,32 +54,30 @@ class WeatherData {
 
     // Parse temperature
     List<dynamic> temperatureList = json['hourly']['temperature_2m'];
-    
+
     // Parse humidity
     List<dynamic> humidityList = json['hourly']['relative_humidity_2m'];
-    
+
     // Parse precipitation
     List<dynamic> precipitationList = json['hourly']['precipitation'];
-    
+
     // Parse rain
     List<dynamic> rainList = json['hourly']['rain'];
-    
+
     // Parse UV index
     List<dynamic> uvIndexList = json['hourly']['uv_index'];
 
     // Create hourly forecasts
     List<WeatherForecast> hourlyForecasts = [];
     for (int i = 0; i < times.length; i++) {
-      hourlyForecasts.add(
-        WeatherForecast.fromJson(
-          times[i],
-          temperatureList[i].toDouble(),
-          humidityList[i].toDouble(),
-          precipitationList[i].toDouble(),
-          rainList[i].toDouble(),
-          uvIndexList[i].toDouble(),
-        )
-      );
+      hourlyForecasts.add(WeatherForecast.fromJson(
+        times[i],
+        temperatureList[i].toDouble(),
+        humidityList[i].toDouble(),
+        precipitationList[i].toDouble(),
+        rainList[i].toDouble(),
+        uvIndexList[i].toDouble(),
+      ));
     }
 
     return WeatherData(
@@ -108,20 +99,18 @@ class WeatherNotifier extends StateNotifier<AsyncValue<WeatherData>> {
       await Future.delayed(const Duration(seconds: 2));
 
       // Open-Meteo API endpoint for Sorocaba
-      final url = Uri.parse(
-        'https://api.open-meteo.com/v1/forecast'
-        '?latitude=-23.5017'
-        '&longitude=-47.4581'
-        '&hourly=temperature_2m,relative_humidity_2m,precipitation,rain,uv_index'
-        '&timezone=America%2FSao_Paulo'
-      );
+      final url = Uri.parse('https://api.open-meteo.com/v1/forecast'
+          '?latitude=-23.5017'
+          '&longitude=-47.4581'
+          '&hourly=temperature_2m,relative_humidity_2m,precipitation,rain,uv_index'
+          '&timezone=America%2FSao_Paulo');
 
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
         final weatherData = WeatherData.fromJson(jsonResponse);
-        
+
         state = AsyncValue.data(weatherData);
       } else {
         state = AsyncValue.error('Failed to load weather', StackTrace.current);
@@ -133,6 +122,7 @@ class WeatherNotifier extends StateNotifier<AsyncValue<WeatherData>> {
 }
 
 // Provider for Weather State
-final weatherProvider = StateNotifierProvider<WeatherNotifier, AsyncValue<WeatherData>>((ref) {
+final weatherProvider =
+    StateNotifierProvider<WeatherNotifier, AsyncValue<WeatherData>>((ref) {
   return WeatherNotifier();
 });

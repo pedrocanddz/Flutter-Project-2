@@ -18,7 +18,7 @@ class ClimateApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Sorocaba Climate App',
+      title: 'Sorocaba Previsão do Tempo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -43,24 +43,20 @@ class _WeatherHomePageState extends ConsumerState<WeatherHomePage> {
   @override
   void initState() {
     super.initState();
-    // Fetch weather when the page loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(weatherProvider.notifier).fetchWeatherForecast();
     });
   }
 
-  // Helper method to convert temperature
   double _convertTemperature(double celsius) {
     return _isCelsius ? celsius : (celsius * 9 / 5) + 32;
   }
 
   @override
   Widget build(BuildContext context) {
-    // Use MediaQuery to adapt UI based on screen size
     final mediaQuery = MediaQuery.of(context);
     final orientation = mediaQuery.orientation;
 
-    // Background color changes based on orientation
     Color backgroundColor = orientation == Orientation.portrait
         ? Colors.blue.shade100
         : Colors.blue.shade200;
@@ -68,7 +64,7 @@ class _WeatherHomePageState extends ConsumerState<WeatherHomePage> {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: const Text('Sorocaba Weather Forecast'),
+        title: const Text('Sorocaba Previsão do Tempo'),
       ),
       body: Column(
         children: [
@@ -81,7 +77,7 @@ class _WeatherHomePageState extends ConsumerState<WeatherHomePage> {
                   child: TextField(
                     controller: _locationController,
                     decoration: InputDecoration(
-                      labelText: 'Location',
+                      labelText: 'Localização',
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.search),
                         onPressed: () {
@@ -140,7 +136,7 @@ class _WeatherHomePageState extends ConsumerState<WeatherHomePage> {
                                               fontWeight: FontWeight.bold),
                                         ),
                                         Text(
-                                            'UV Index: ${forecast.uvIndex.toStringAsFixed(1)}'),
+                                            'Indice UV: ${forecast.uvIndex.toStringAsFixed(1)}'),
                                       ],
                                     ),
                                   ),
@@ -149,11 +145,11 @@ class _WeatherHomePageState extends ConsumerState<WeatherHomePage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                          'Temp: ${_convertTemperature(forecast.temperature2m).toStringAsFixed(1)}°${_isCelsius ? 'C' : 'F'}'),
+                                          'Temperatura: ${_convertTemperature(forecast.temperature2m).toStringAsFixed(1)}°${_isCelsius ? 'C' : 'F'}'),
                                       Text(
-                                          'Precipitation: ${(forecast.precipitation * 100).toStringAsFixed(0)}%'),
+                                          'Chuva: ${(forecast.precipitation * 100).toStringAsFixed(0)}%'),
                                       Text(
-                                          'Humidity: ${forecast.relativeHumidity2m.toStringAsFixed(0)}%'),
+                                          'Umidade do Ar: ${forecast.relativeHumidity2m.toStringAsFixed(0)}%'),
                                     ],
                                   ),
                                 ],
@@ -194,19 +190,19 @@ class _WeatherHomePageState extends ConsumerState<WeatherHomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                  'Temperature: ${_convertTemperature(forecast.temperature2m).toStringAsFixed(1)}°${_isCelsius ? 'C' : 'F'}'),
+                  'Temperatura: ${_convertTemperature(forecast.temperature2m).toStringAsFixed(1)}°${_isCelsius ? 'C' : 'F'}'),
               Text(
-                  'Humidity: ${forecast.relativeHumidity2m.toStringAsFixed(0)}%'),
+                  'Umidade do Ar: ${forecast.relativeHumidity2m.toStringAsFixed(0)}%'),
               Text(
-                  'Precipitation: ${(forecast.precipitation * 100).toStringAsFixed(0)}%'),
-              Text('Rain: ${(forecast.rain * 100).toStringAsFixed(0)}%'),
-              Text('UV Index: ${forecast.uvIndex.toStringAsFixed(1)}'),
+                  'Precipitação: ${(forecast.precipitation * 100).toStringAsFixed(0)}%'),
+              Text('Chuva: ${(forecast.rain * 100).toStringAsFixed(0)}%'),
+              Text('Índice UV: ${forecast.uvIndex.toStringAsFixed(1)}'),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
+              child: const Text('Fechar'),
             ),
           ],
         );
